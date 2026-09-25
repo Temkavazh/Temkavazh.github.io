@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Портфолио Артема Важенина</title>
+<meta name="description" content="Автоматизация процессов и внедрение ИИ: сервис модерации отзывов, сайт с автоматизацией цен, отчётность, боты и интеграции с CRM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F3EF;--panel:#FFFFFF;--sunk:#E8EAE4;--ink:#15171C;--muted:#5B5F67;--line:#D6D9D1;
+  --accent:#2E4FE0;--accent-ink:#FFFFFF;--accent-soft:#E1E6FD;
+  --dark:#15171D;--dark-ink:#ECEEF2;--dark-muted:#9AA0AC;--dark-line:#2E323B;--dark-dot:#262932;
+  --f-display:"Unbounded","Onest",system-ui,sans-serif;
+  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0F1114;--panel:#171A1F;--sunk:#1D2026;--ink:#E8EAEE;--muted:#9BA1AC;--line:#2A2E36;
+  --accent:#8C9BFF;--accent-ink:#0D1022;--accent-soft:#252C52;--dark:#0A0B0E;--dark-dot:#1D2027;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:is(a,button):focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+
+.hero{background-color:var(--dark);background-image:radial-gradient(var(--dark-dot) 1.2px,transparent 1.4px);background-size:22px 22px;color:var(--dark-ink)}
+.hero .wrap{padding-block:64px 56px;display:flex;flex-direction:column;gap:28px}
+.who{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-muted);margin:0}
+.hero h1{font-family:var(--f-display);font-weight:600;font-size:clamp(34px,6.4vw,76px);line-height:1.02;letter-spacing:-.02em;margin:0;max-width:15ch;text-wrap:balance}
+.hero h1 em{font-style:normal;color:#9AA8FF}
+.hero p.lead{margin:0;font-size:19px;color:#C4C8D2;max-width:58ch}
+.nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--dark-line);border:1px solid var(--dark-line);border-radius:16px;overflow:hidden}
+.num{background:#1B1E25;padding:18px 20px}
+.num b{display:block;font:600 clamp(24px,3.2vw,34px)/1.05 var(--f-display);color:#fff;font-variant-numeric:tabular-nums}
+.num span{display:block;margin-top:6px;font-size:13px;color:var(--dark-muted);line-height:1.4}
+.links{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 15px/1 var(--f-body);text-decoration:none;padding:13px 18px;border-radius:12px;border:1px solid var(--dark-line);color:var(--dark-ink);background:transparent}
+.btn.primary{background:#8C9BFF;border-color:#8C9BFF;color:#0D1022}
+.btn:hover{border-color:#8C9BFF}
+
+.list{padding-block:56px 24px;display:flex;flex-direction:column;gap:22px}
+.list > h2{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.01em}
+.proj{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:32px;align-items:center}
+.proj.flip .media{order:-1}
+.proj.compact{grid-template-columns:minmax(0,1fr)}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 9px;border-radius:7px}
+.proj h3{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,2.6vw,28px);line-height:1.15;margin:14px 0 12px;letter-spacing:-.01em;text-wrap:balance}
+.task{margin:0 0 14px;color:var(--muted);font-size:16px}
+.did{margin:0 0 18px;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.did li{position:relative;padding-left:20px;font-size:15px;line-height:1.5}
+.did li::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.res{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.res div{background:var(--sunk);border-radius:12px;padding:10px 14px;min-width:120px;flex:1 1 120px}
+.res b{display:block;font:600 22px/1.1 var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+.res span{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.stack{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.stack span{font-family:var(--f-mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:7px;padding:3px 8px}
+.go{display:flex;flex-wrap:wrap;gap:8px}
+.go a{display:inline-flex;align-items:center;gap:6px;font:500 14px/1 var(--f-body);text-decoration:none;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel)}
+.go a.main{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.go a:hover{border-color:var(--accent)}
+.go a::after{content:"→";font-family:var(--f-mono)}
+
+.media{display:flex;flex-direction:column;gap:12px;min-width:0}
+.shot{display:block;padding:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--sunk);cursor:zoom-in;width:100%}
+.shot img{display:block;width:100%;height:auto}
+.shot:hover{border-color:var(--accent)}
+.pair{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;align-items:start}
+.phone{display:flex;justify-content:center;align-items:center;background-color:var(--dark);background-image:radial-gradient(var(--dark-dot) 1.2px,transparent 1.4px);background-size:22px 22px;border-radius:18px;padding:28px}
+.phone .shot{width:260px;max-width:100%;border:6px solid #2A2E36;border-radius:34px;background:#000}
+.cover{border-radius:16px;padding:28px;min-height:260px;display:flex;flex-direction:column;justify-content:space-between;gap:18px;background-color:var(--dark);background-image:radial-gradient(var(--dark-dot) 1.2px,transparent 1.4px);background-size:22px 22px;color:var(--dark-ink)}
+.cover .big{font:600 clamp(56px,9vw,104px)/.95 var(--f-display);letter-spacing:-.03em;color:#fff}
+.cover .big small{display:block;font:500 18px/1.3 var(--f-body);letter-spacing:0;color:var(--dark-muted);margin-top:10px}
+.cover .arrow{display:flex;align-items:center;gap:14px;font:500 18px/1.2 var(--f-body)}
+.cover .arrow s{color:var(--dark-muted);text-decoration-thickness:2px}
+.cover .arrow b{color:#7FE0A8;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips span{font-size:14px;padding:8px 12px;border-radius:10px;background:#20242C;border:1px solid var(--dark-line);color:var(--dark-ink)}
+.chips span.hl{background:#2A3160;border-color:#3A4380;color:#C8CFFF}
+.cap{font-size:12.5px;color:var(--muted);margin:0}
+
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.row2 .proj{grid-template-columns:minmax(0,1fr);align-items:start}
+
+footer .wrap{border-top:1px solid var(--line);padding-block:24px 48px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;font-size:14px;color:var(--muted)}
+footer strong{color:var(--ink);font-weight:600}
+
+.lb{position:fixed;inset:0;background:rgba(8,9,12,.88);display:flex;align-items:center;justify-content:center;padding:24px;z-index:10;cursor:zoom-out}
+.lb img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.lb button{position:absolute;top:16px;right:16px;font:500 14px/1 var(--f-body);color:#fff;background:rgba(255,255,255,.12);border:0;border-radius:10px;padding:11px 14px;cursor:pointer}
+
+@media (max-width:900px){
+  .proj,.proj.flip{grid-template-columns:minmax(0,1fr);gap:22px;padding:20px}
+  .proj .media,.proj.flip .media{order:-1}
+  .nums{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .row2{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:520px){.hero .wrap{padding-block:44px 40px}.pair{grid-template-columns:minmax(0,1fr)}.proj{border-radius:18px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="who">Артем Важенин · автоматизация процессов и внедрение ИИ</p>
+    <h1>Убираю ручную работу из&nbsp;бизнеса с&nbsp;помощью <em>ИИ</em></h1>
+    <p class="lead">Нахожу, где команда теряет время на рутину, и превращаю это в систему: ИИ-модерация, боты, сайты, интеграции с CRM и отчётность, которая собирается сама.</p>
+    <div class="nums">
+      <div class="num"><b>8</b><span>проектов — от сайта до ИИ-сервиса</span></div>
+      <div class="num"><b>86%</b><span>отзывов ИИ разобрал без модератора</span></div>
+      <div class="num"><b>3 200</b><span>объектов капстроя в одной сводке</span></div>
+      <div class="num"><b>1 час</b><span>вместо нескольких дней на отчёт</span></div>
+    </div>
+    <div class="links">
+      <a class="btn primary" href="#projects">Смотреть проекты</a>
+      <a class="btn" href="https://github.com/diid-one" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap list" id="projects">
+  <h2>Проекты</h2>
+
+  <article class="proj">
+    <div>
+      <span class="tag">Веб-сервис · ИИ-модерация</span>
+      <h3>Модерация отзывов с&nbsp;ИИ для платформы найма</h3>
+      <p class="task">Исполнители оставляют отзывы о заказчиках. Проверять каждый вручную долго, а пропустить оскорбления, дискриминацию или чужой телефон — риск для площадки.</p>
+      <ul class="did">
+        <li>ИИ читает каждый отзыв и выносит вердикт с уверенностью и категорией риска: трудовые отношения, персональные данные, дискриминация, невыплата, накрутка и другие.</li>
+        <li>Три режима — авто-, пре- и постмодерация. Чистое публикуется сразу, подозрительное уходит модератору.</li>
+        <li>Очередь на разбор, эскалации в поддержку, журнал действий, массовая обработка пачками.</li>
+      </ul>
+      <div class="res">
+        <div><b>419</b><span>отзывов прошло через систему</span></div>
+        <div><b>86%</b><span>решено без ручного разбора</span></div>
+        <div><b>8</b><span>категорий риска</span></div>
+      </div>
+      <p class="cap">Название клиента на скриншотах скрыто.</p>
+    </div>
+    <div class="media">
+      <button class="shot" type="button" data-full="img/otzyvy-1.jpg"><img src="img/otzyvy-1.jpg" width="1600" height="788" alt="Рабочее место модератора: воронка отзывов — 56 на разбор, 354 опубликовано, 7 отклонено, 2 в поддержке"></button>
+      <button class="shot" type="button" data-full="img/otzyvy-2.jpg"><img src="img/otzyvy-2.jpg" width="1600" height="788" alt="Вердикты ИИ по отзывам: категория риска, уверенность и кнопки модератора" loading="lazy"></button>
+    </div>
+  </article>
+
+  <article class="proj flip">
+    <div>
+      <span class="tag">Сценарий автоматизации · живое демо</span>
+      <h3>Авторазбор обращений клиентов</h3>
+      <p class="task">Типовой сценарий, который я собираю для бизнеса: обращения из почты, мессенджеров, с сайта и маркетплейсов больше не нужно разбирать и переносить в CRM руками.</p>
+      <ul class="did">
+        <li>ИИ определяет тему, тон и срочность, достаёт номер заказа, артикул, сроки.</li>
+        <li>Заводит сделку в Битрикс24 или amoCRM и ставит задачу ответственному.</li>
+        <li>Готовит ответ клиенту: простое отправляет сам, спорное отдаёт менеджеру.</li>
+      </ul>
+      <div class="res">
+        <div><b>2 CRM</b><span>Битрикс24 и amoCRM</span></div>
+        <div><b>3</b><span>отрасли на выбор в демо</span></div>
+      </div>
+      <div class="go"><a class="main" href="https://temkavazh.github.io/avtorazbor/" target="_blank" rel="noopener">Открыть демо</a></div>
+    </div>
+    <div class="media">
+      <button class="shot" type="button" data-full="img/avtorazbor.jpg"><img src="img/avtorazbor.jpg" width="1440" height="900" alt="Демо: входящие обращения, разбор ИИ с метками, сделки в колонках CRM и готовый ответ" loading="lazy"></button>
+    </div>
+  </article>
+
+  <article class="proj">
+    <div>
+      <span class="tag">Сайт · автоматизация цен</span>
+      <h3>G Store — магазин Apple-техники</h3>
+      <p class="task">Магазину с шоурумом нужен был свой сайт с каталогом и ценами, которые меняются каждый день вслед за поставщиками.</p>
+      <ul class="did">
+        <li>Сайт с каталогом, корзиной, мобильной версией и админкой для товаров, цен и заказов.</li>
+        <li>Цены из Telegram: система читает прайсы поставщиков в закрытой группе, сопоставляет позиции с каталогом и считает розничные цены по формуле.</li>
+        <li>Менеджер получает готовый пакет изменений и только подтверждает его.</li>
+      </ul>
+      <div class="stack"><span>Next.js</span><span>PostgreSQL</span><span>Prisma</span><span>Docker</span><span>Coolify</span></div>
+      <div class="go"><a class="main" href="https://g-stor.ru/" target="_blank" rel="noopener">Открыть сайт</a></div>
+    </div>
+    <div class="media">
+      <div class="phone"><button class="shot" type="button" data-full="img/gstore-mobile.jpg"><img src="img/gstore-mobile.jpg" width="390" height="844" alt="Мобильная версия сайта G Store: главная с iPhone 17 Pro Max, адрес шоурума и категории" loading="lazy"></button></div>
+    </div>
+  </article>
+
+  <article class="proj flip">
+    <div>
+      <span class="tag">Отчётность · Excel</span>
+      <h3>Сводный отчёт по продажам, который собирается сам</h3>
+      <p class="task">Продажи лежат в трёх местах — выгрузка из 1С, отчёт маркетплейса и возвраты, и у каждого свои коды товаров. Сводку собирали руками два дня.</p>
+      <ul class="did">
+        <li>Отчёт сам собирается из трёх источников, товары сопоставляются через справочник.</li>
+        <li>Нераспознанные позиции подсвечиваются красным — ошибки видно сразу, а не в конце месяца.</li>
+        <li>Маржа, статусы «лидер» и «низкая маржа», итоги по месяцам и график выручки считаются автоматически.</li>
+      </ul>
+      <div class="res">
+        <div><b>1 час</b><span>вместо двух дней</span></div>
+        <div><b>3</b><span>источника: 1С, маркетплейс, возвраты</span></div>
+      </div>
+      <p class="cap">Скриншоты на тестовых данных.</p>
+    </div>
+    <div class="media">
+      <button class="shot" type="button" data-full="img/excel-1.jpg"><img src="img/excel-1.jpg" width="1600" height="842" alt="Сводный отчёт по продажам: выручка, себестоимость, маржа и статусы по товарам" loading="lazy"></button>
+      <button class="shot" type="button" data-full="img/excel-2.jpg"><img src="img/excel-2.jpg" width="794" height="411" alt="Отчёт маркетплейса: позиции, не найденные в справочнике, подсвечены красным" loading="lazy"></button>
+    </div>
+  </article>
+
+  <article class="proj">
+    <div>
+      <span class="tag">Приложение · аналитика</span>
+      <h3>Отчётность по 3&nbsp;200 объектам капитального строительства</h3>
+      <p class="task">Сводную отчётность по объектам собирали вручную из нескольких систем, и на это уходило несколько дней.</p>
+      <ul class="did">
+        <li>Приложение само собирает данные из нескольких систем в единую форму.</li>
+        <li>Проверки подсвечивают расхождения в исходных данных до того, как они попадут в отчёт.</li>
+        <li>Сводка для руководства формируется за один запуск.</li>
+      </ul>
+      <div class="res">
+        <div><b>1 час</b><span>вместо нескольких дней</span></div>
+        <div><b>каждый день</b><span>рабочий инструмент отдела</span></div>
+      </div>
+    </div>
+    <div class="media">
+      <div class="cover" role="img" aria-label="3 200 объектов: отчёт за час вместо нескольких дней">
+        <div class="big">3 200<small>объектов капстроя в одной сводке</small></div>
+        <div class="arrow"><s>несколько дней</s><span aria-hidden="true">→</span><b>1 час</b></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="proj flip">
+    <div>
+      <span class="tag">Веб-приложение · ИИ-помощник</span>
+      <h3>Выездник — приложение для отдела претензионной работы</h3>
+      <p class="task">Отдел управляющей компании вёл обращения жителей многоквартирных домов в таблицах и почте, выезды планировал вручную, письма набирал с нуля.</p>
+      <ul class="did">
+        <li>Реестр обращений, календарь выездов, аналитика по срокам и нагрузке специалистов.</li>
+        <li>Письма собираются в .docx из шаблонов, ЭДО и электронная подпись.</li>
+        <li>ИИ-помощник распознаёт сканы, делает сводку по делу и пишет черновики абзацев.</li>
+        <li>Утренний дайджест и напоминания о просрочках в Telegram, мобильная версия с камерой.</li>
+      </ul>
+      <div class="stack"><span>Next.js</span><span>Prisma</span><span>Claude API</span><span>PWA</span></div>
+      <div class="go"><a href="https://github.com/diid-one/vyezdnik" target="_blank" rel="noopener">Код на GitHub</a></div>
+    </div>
+    <div class="media">
+      <div class="cover" role="img" aria-label="Возможности приложения">
+        <div class="chips">
+          <span class="hl">Реестр обращений</span><span>Календарь выездов</span><span class="hl">ИИ-помощник</span><span>Письма в .docx</span><span>ЭДО и УКЭП</span><span>Почта IMAP/SMTP</span><span class="hl">Аналитика сроков</span><span>Push и Telegram</span><span>Камера в форме выезда</span>
+        </div>
+        <div class="arrow"><s>таблицы и почта</s><span aria-hidden="true">→</span><b>всё в одном окне</b></div>
+      </div>
+    </div>
+  </article>
+
+  <div class="row2">
+    <article class="proj compact">
+      <div>
+        <span class="tag">Бот · Telegram</span>
+        <h3>Бот оптовых запросов</h3>
+        <p class="task">В оптовых чатах постоянно спрашивают наличие и цены, а менеджер не успевает следить за всеми группами.</p>
+        <ul class="did">
+          <li>Бот находит в чатах запросы на позиции, которые есть в оптовом прайсе, и отвечает с ценой.</li>
+          <li>Если позиции нет в прайсе — молчит, чтобы не засорять чат.</li>
+          <li>Ограничения на частоту ответов, журнал всех сообщений.</li>
+        </ul>
+        <div class="res"><div><b>авто</b><span>ответ с ценой из прайса поставщика</span></div></div>
+      </div>
+    </article>
+    <article class="proj compact">
+      <div>
+        <span class="tag">Инструмент · open source</span>
+        <h3>Бот для работы с Claude Code с телефона</h3>
+        <p class="task">Нужно продолжать работу над проектами, когда под рукой только телефон.</p>
+        <ul class="did">
+          <li>Telegram-бот передаёт задачи Claude Code на компьютере и присылает результат в чат.</li>
+          <li>Открытый код, можно поставить себе.</li>
+        </ul>
+        <div class="go"><a href="https://github.com/diid-one/claude-telegram-bot" target="_blank" rel="noopener">Код на GitHub</a></div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><strong>Артем Важенин</strong> — автоматизация процессов и внедрение ИИ</span>
+    <span>Скриншоты клиентских проектов обезличены</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var lb = null;
+  function close(){ if (lb){ lb.remove(); lb = null; document.body.style.overflow = ''; } }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('.shot');
+    if (!b) return;
+    var img = b.querySelector('img');
+    lb = document.createElement('div');
+    lb.className = 'lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', img ? img.alt : 'Скриншот');
+    lb.innerHTML = '<img src="' + b.getAttribute('data-full') + '" alt=""><button type="button">Закрыть</button>';
+    lb.querySelector('img').alt = img ? img.alt : '';
+    lb.addEventListener('click', close);
+    document.body.appendChild(lb); document.body.style.overflow = 'hidden';
+    lb.querySelector('button').focus();
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+})();
+</script>
+</body>
+</html>
