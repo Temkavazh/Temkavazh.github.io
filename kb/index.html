@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Бот по базе знаний</title>
+<meta name="description" content="Демо RAG: бот отвечает по регламентам компании, показывает источники и честно говорит, когда ответа в базе нет.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F3EF;--ink:#15171C;--muted:#5B5F67;--line:#D6D9D1;--panel:#FFFFFF;--accent:#2E4FE0;--accent-soft:#E1E6FD;--hl:#FFF1B8;
+  --s-bg:#15171D;--s-dot:#262932;--s-card:#1F2229;--s-card2:#272B34;--s-line:#30343E;--s-ink:#ECEEF2;--s-muted:#959BA7;--s-acc:#8C9BFF;--s-acc-soft:#2A3160;
+  --ok:#5FCB91;--ok-soft:#173A29;--warn:#EDBE62;--warn-soft:#3E3014;--bad:#F2887E;--bad-soft:#431D1A;
+  --f-display:"Unbounded","Onest",system-ui,sans-serif;--f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1114;--ink:#E8EAEE;--muted:#9BA1AC;--line:#2A2E36;--panel:#171A1F;--accent:#8C9BFF;--accent-soft:#252C52;--hl:#4A3F12;--s-bg:#0A0B0E;--s-dot:#1D2027;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+:is(a,button,input):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:40px 56px;display:flex;flex-direction:column;gap:26px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.eyebrow a{color:inherit}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(30px,5.4vw,52px);line-height:1.06;letter-spacing:-.015em;margin:0 0 12px}
+.sub{margin:0;font-size:18px;color:var(--muted);max-width:60ch}
+
+.stage{background-color:var(--s-bg);background-image:radial-gradient(var(--s-dot) 1.2px,transparent 1.4px);background-size:22px 22px;border-radius:22px;padding:18px;color:var(--s-ink);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px}
+.box{background:var(--s-card);border:1px solid var(--s-line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.box-h{display:flex;align-items:center;justify-content:space-between;font:500 12px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--s-muted)}
+.online{display:inline-flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-family:var(--f-body)}
+.online::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok)}
+
+.log{display:flex;flex-direction:column;gap:10px;min-height:340px;max-height:430px;overflow-y:auto;padding-right:4px}
+.m{max-width:88%;padding:10px 14px;font-size:15px;line-height:1.5;border-radius:16px;animation:in .3s ease both}
+.m.bot{align-self:flex-start;background:var(--s-card2);border-bottom-left-radius:4px}
+.m.me{align-self:flex-end;background:var(--s-acc);color:#0D1022;border-bottom-right-radius:4px}
+.m.no{background:var(--warn-soft);color:var(--warn)}
+.cites{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cite{font:500 12px/1 var(--f-body);color:var(--s-acc);background:var(--s-acc-soft);border:0;border-radius:999px;padding:6px 10px;cursor:pointer}
+.dots{display:inline-flex;gap:4px}.dots i{width:6px;height:6px;border-radius:50%;background:var(--s-muted);animation:blink 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+.ask{display:flex;gap:8px}
+.ask input{flex:1;min-width:0;font:15px var(--f-body);color:var(--s-ink);background:var(--s-card2);border:1px solid var(--s-line);border-radius:12px;padding:12px 14px}
+.ask input::placeholder{color:var(--s-muted)}
+.ask button{font:500 15px/1 var(--f-body);color:#0D1022;background:var(--s-acc);border:0;border-radius:12px;padding:0 18px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:13px/1.2 var(--f-body);color:var(--s-ink);background:transparent;border:1px solid var(--s-line);border-radius:999px;padding:7px 11px;cursor:pointer;text-align:left}
+.chips button:hover{border-color:var(--s-acc)}
+
+.steps{display:flex;flex-direction:column;gap:10px}
+.st{background:var(--s-card2);border-radius:12px;padding:12px;transition:opacity .3s ease}
+.st.wait{opacity:.25}
+.st h3{margin:0 0 8px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center}
+.st h3 b{width:20px;height:20px;border-radius:6px;background:var(--s-acc-soft);color:var(--s-acc);font:500 11px/20px var(--f-mono);text-align:center;flex:none}
+.tok{display:flex;flex-wrap:wrap;gap:5px}
+.tok span{font:12px/1 var(--f-mono);padding:5px 8px;border-radius:7px;background:#2F3440;color:var(--s-ink)}
+.tok span.syn{background:var(--s-acc-soft);color:var(--s-acc)}
+.hits{display:flex;flex-direction:column;gap:8px}
+.hit{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:4px 10px;font-size:12.5px}
+.hit .t{color:var(--s-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hit .v{font-family:var(--f-mono);color:var(--s-muted);text-align:right}
+.bar{grid-column:1/-1;height:6px;border-radius:3px;background:#2F3440;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--s-acc);transition:width .6s ease}
+.hit.top .bar i{background:var(--ok)}
+.conf{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--s-muted)}
+.pill{font-weight:500;font-size:12px;padding:5px 10px;border-radius:999px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.note{font-size:12.5px;color:var(--s-muted);margin:0}
+
+.kb h2,.how h2{font-family:var(--f-display);font-weight:500;font-size:20px;margin:0 0 12px}
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.doc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.doc h3{margin:0 0 8px;font-size:15px;font-weight:600}
+.frag{font-size:13.5px;color:var(--muted);margin:0 0 6px;padding:4px 6px;border-radius:6px;transition:background-color .3s}
+.frag:last-child{margin-bottom:0}
+.frag.on{background:var(--hl);color:var(--ink)}
+.frag small{font-family:var(--f-mono);font-size:11px;color:var(--accent);margin-right:6px}
+.how .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.node{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:500}
+.node.ai{background:var(--accent);border-color:var(--accent);color:#fff}
+.arr{color:var(--muted);font-family:var(--f-mono)}
+.how p{margin:0;color:var(--muted);max-width:75ch;font-size:15px}
+footer{border-top:1px solid var(--line);padding-top:18px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
+footer a{color:var(--accent)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes blink{50%{opacity:.25}}
+@media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}.log{max-height:none}}
+@media (max-width:520px){.wrap{padding-block:28px 44px}.stage{padding:12px;border-radius:16px}.ask button{padding:0 14px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow"><a href="../">Портфолио</a> · RAG · живое демо</p>
+    <h1>Бот по базе знаний</h1>
+    <p class="sub">Спрашиваете как у коллеги — бот находит ответ в регламентах компании и показывает, откуда его взял. Если в базе ответа нет, честно говорит об этом, а не выдумывает.</p>
+  </header>
+
+  <section class="stage" aria-label="Демонстрация">
+    <div class="box">
+      <div class="box-h"><span>Чат с ботом</span><span class="online">на связи</span></div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <form class="ask" id="ask"><input id="q" name="q" autocomplete="off" placeholder="Например: как вернуть товар?" aria-label="Вопрос боту"><button type="submit">Спросить</button></form>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="box">
+      <div class="box-h"><span>Как бот нашёл ответ</span></div>
+      <div class="steps">
+        <div class="st" id="s1"><h3><b>1</b>Понял вопрос</h3><div class="tok" id="tok"></div></div>
+        <div class="st" id="s2"><h3><b>2</b><span>Нашёл в базе среди <span id="nfrag"></span> фрагментов</span></h3><div class="hits" id="hits"></div></div>
+        <div class="st" id="s3"><h3><b>3</b>Проверил уверенность</h3><div class="conf" id="conf"></div></div>
+        <div class="st" id="s4"><h3><b>4</b>Ответил со ссылками на источник</h3><p class="note" id="s4t"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kb" aria-labelledby="kb-h">
+    <h2 id="kb-h">База знаний магазина техники</h2>
+    <div class="docs" id="docs"></div>
+  </section>
+
+  <section class="how" aria-labelledby="how-h">
+    <h2 id="how-h">Как это устроено</h2>
+    <div class="flow">
+      <span class="node">Регламенты, PDF, Wiki</span><span class="arr">→</span>
+      <span class="node">Нарезка на фрагменты</span><span class="arr">→</span>
+      <span class="node">Поиск похожих</span><span class="arr">→</span>
+      <span class="node ai">LLM отвечает только по ним</span><span class="arr">→</span>
+      <span class="node">Ссылки на источник</span>
+    </div>
+    <p>В демо поиск работает прямо в браузере, а ответ собирается из найденного фрагмента. В рабочей версии найденные фрагменты передаются модели, и она формулирует ответ своими словами — но только по ним. Если уверенность низкая, бот передаёт вопрос сотруднику.</p>
+  </section>
+
+  <footer>
+    <span><strong>Артем Важенин</strong> — автоматизация процессов и внедрение ИИ · <a href="https://t.me/temka_vazh" target="_blank" rel="noopener">@temka_vazh</a></span>
+    <a href="../">Все проекты →</a>
+  </footer>
+</main>
+
+<script>
+// Поиск по базе знаний: нормализация русских слов, синонимы, BM25.
+(function (root) {
+  var DOCS = [
+    {id: 'vozvrat', title: 'Возврат товара', chunks: [
+      'Вернуть товар надлежащего качества можно в течение 14 дней после покупки, если сохранены упаковка, пломбы и чек. Деньги возвращаются тем же способом, которым вы платили, в течение 10 рабочих дней.',
+      'Технически сложные товары — смартфоны, ноутбуки, телевизоры — надлежащего качества возврату не подлежат. Их можно вернуть только при наличии брака.',
+      'Заявку на возврат оформляют в личном кабинете в разделе «Мои заказы» или в любом магазине сети.'
+    ]},
+    {id: 'dostavka', title: 'Доставка', chunks: [
+      'Доставка по Москве в пределах МКАД — на следующий день, стоимость 390 ₽, бесплатно при заказе от 5 000 ₽.',
+      'За МКАД до 30 км — 690 ₽, срок 1–2 дня. В другие регионы отправляем транспортными компаниями, срок и стоимость рассчитываются при оформлении заказа.',
+      'Курьер звонит за час до приезда. Перенести доставку можно в личном кабинете не позднее 20:00 накануне.'
+    ]},
+    {id: 'garantiya', title: 'Гарантия и ремонт', chunks: [
+      'На всю технику действует гарантия производителя — от 12 месяцев. Срок указан в гарантийном талоне и в карточке товара.',
+      'Если товар сломался во время гарантии, привезите его в магазин или вызовите курьера: мы отправим его в авторизованный сервис. Диагностика занимает до 20 дней.',
+      'На время ремонта техники дороже 20 000 ₽ выдаём подменное устройство, если оно есть в наличии.'
+    ]},
+    {id: 'oplata', title: 'Оплата и рассрочка', chunks: [
+      'Принимаем банковские карты, СБП, наличные при получении и оплату по счёту для юрлиц.',
+      'Рассрочка без переплаты на 6 месяцев доступна на товары от 10 000 ₽ через банки-партнёры. Решение приходит за 2–5 минут.'
+    ]},
+    {id: 'bonusy', title: 'Бонусная программа', chunks: [
+      'За каждую покупку начисляется 3% бонусами. Бонусами можно оплатить до 30% стоимости следующего заказа.',
+      'Бонусы сгорают через 12 месяцев после начисления. Баланс виден в личном кабинете.'
+    ]},
+    {id: 'podderzhka', title: 'Поддержка и график', chunks: [
+      'Поддержка работает ежедневно с 9:00 до 21:00: по телефону, в чате на сайте и в Telegram.',
+      'Магазины открыты с 10:00 до 22:00 без выходных.'
+    ]},
+    {id: 'pretenzii', title: 'Претензии', chunks: [
+      'Претензию можно отправить на почту или через форму на сайте. Срок ответа — до 10 дней.',
+      'Если заказ пришёл повреждённым, не принимайте его у курьера или сфотографируйте повреждения при нём и сообщите в поддержку в течение суток.'
+    ]},
+    {id: 'yurlica', title: 'Для юрлиц', chunks: [
+      'Для юрлиц работаем по договору, выставляем счёт и отгружаем с УПД. Постоянным клиентам доступна отсрочка платежа до 30 дней.'
+    ]}
+  ];
+
+  var STOP = ('и в во на с со по для как что это если я мне меня можно ли у вас есть мы вы он она они их его ее её а но же бы не нет да до от за при из к ко о об про так там тут где когда какой какая какие какую сколько будет было был ваш ваши мой моя мои свой себя уже еще ещё или то той тот этот эта эти чтобы нужно надо хочу хотел хотела подскажите скажите пожалуйста').split(' ');
+  var SYN = {
+    'верну': ['возвр'], 'вернут': ['возвр'], 'сдать': ['возвр'], 'обмен': ['возвр'], 'понра': ['возвр', 'надле'],
+    'привез': ['доста'], 'довез': ['доста'], 'курье': ['доста'], 'отпра': ['доста'],
+    'слома': ['гаран', 'ремон'], 'полом': ['гаран', 'ремон'], 'сломан': ['гаран', 'ремон'], 'работ': [], 'ремон': ['гаран'],
+    'телеф': ['смарт'], 'айфон': ['смарт'], 'ноут': ['ноутб'], 'телик': ['телев'],
+    'кредит': ['рассро'], 'частя': ['рассро'], 'рассро': ['перепл'],
+    'баллы': ['бонус'], 'балло': ['бонус'], 'кешбэ': ['бонус'], 'кэшбэ': ['бонус'],
+    'жалоб': ['прете'], 'пожал': ['прете'],
+    'компа': ['юрлиц'], 'ооо': ['юрлиц'], 'организ': ['юрлиц'], 'счет': ['юрлиц', 'счёт'],
+    'графи': ['работа', 'открыт'], 'часы': ['работа', 'открыт'], 'откры': ['открыт'],
+    'казан': ['регио'], 'питер': ['регио'], 'спб': ['регио'], 'екате': ['регио'], 'новос': ['регио'], 'регио': ['регио'], 'город': ['регио'],
+    'карто': ['карты'], 'картой': ['карты'], 'налич': ['налич'], 'оплат': ['оплат'], 'заплат': ['оплат'],
+    'повре': ['повре'], 'разби': ['повре'], 'брак': ['брака']
+  };
+
+  function words(s) {
+    return String(s).toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+  }
+  function norm(w) { return w.length >= 6 ? w.slice(0, 5) : w; }
+  function tokens(s) { return words(s).filter(function (w) { return STOP.indexOf(w) < 0 && w.length > 1; }).map(norm); }
+
+  function expand(qTokens) {
+    var out = [], added = [];
+    qTokens.forEach(function (t) {
+      if (out.indexOf(t) < 0) out.push(t);
+      Object.keys(SYN).forEach(function (k) {
+        if (t.indexOf(k) === 0 || k.indexOf(t) === 0 && t.length >= 4) {
+          SYN[k].forEach(function (x) { var n = norm(x); if (out.indexOf(n) < 0) { out.push(n); added.push(n); } });
+        }
+      });
+    });
+    return {all: out, added: added};
+  }
+
+  var CH = [];
+  DOCS.forEach(function (d) { d.chunks.forEach(function (text, i) { CH.push({doc: d.id, title: d.title, n: i + 1, text: text, toks: tokens(d.title + ' ' + text)}); }); });
+  var N = CH.length, avg = CH.reduce(function (s, c) { return s + c.toks.length; }, 0) / N;
+  var DF = {};
+  CH.forEach(function (c) { var seen = {}; c.toks.forEach(function (t) { if (!seen[t]) { seen[t] = 1; DF[t] = (DF[t] || 0) + 1; } }); });
+
+  function search(q) {
+    var qt = tokens(q), ex = expand(qt), k1 = 1.4, b = 0.75;
+    var res = CH.map(function (c, idx) {
+      var tf = {}; c.toks.forEach(function (t) { tf[t] = (tf[t] || 0) + 1; });
+      var s = 0, hit = [];
+      ex.all.forEach(function (t) {
+        if (!tf[t]) return;
+        var idf = Math.log(1 + (N - DF[t] + 0.5) / (DF[t] + 0.5));
+        var w = ex.added.indexOf(t) >= 0 && qt.indexOf(t) < 0 ? 0.8 : 1;
+        s += w * idf * (tf[t] * (k1 + 1)) / (tf[t] + k1 * (1 - b + b * c.toks.length / avg));
+        hit.push(t);
+      });
+      return {idx: idx, score: s, hit: hit, c: c};
+    }).filter(function (r) { return r.score > 0; }).sort(function (a, b) { return b.score - a.score; });
+    return {q: qt, added: ex.added, top: res.slice(0, 3)};
+  }
+
+  root.KB = {DOCS: DOCS, CH: CH, search: search, tokens: tokens};
+})(typeof window !== 'undefined' ? window : globalThis);
+
+(function(){
+  var ASK=['Можно вернуть телефон, если он просто не понравился?','Сколько стоит доставка за МКАД?','Что делать, если телевизор сломался на гарантии?','Есть ли рассрочка?','Когда сгорают бонусы?','Курьер привёз разбитую коробку','Вы продаёте велосипеды?'];
+  var OK=3.0, MID=2.0;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $=function(id){return document.getElementById(id);};
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var timers=[]; function later(f,ms){timers.push(setTimeout(f,reduce?0:ms));}
+
+  $('nfrag').textContent=KB.CH.length;
+  $('docs').innerHTML=KB.DOCS.map(function(d){return '<div class="doc"><h3>'+esc(d.title)+'</h3>'+d.chunks.map(function(t,i){return '<p class="frag" id="f-'+d.id+'-'+(i+1)+'"><small>#'+(i+1)+'</small>'+esc(t)+'</p>';}).join('')+'</div>';}).join('');
+  $('chips').innerHTML=ASK.map(function(q,i){return '<button type="button" data-i="'+i+'">'+esc(q)+'</button>';}).join('');
+  $('chips').addEventListener('click',function(e){var b=e.target.closest('button'); if(b) ask(ASK[+b.dataset.i]);});
+  $('ask').addEventListener('submit',function(e){e.preventDefault(); var v=$('q').value.trim(); if(!v){$('q').focus(); return;} $('q').value=''; ask(v);});
+  $('log').addEventListener('click',function(e){var b=e.target.closest('.cite'); if(!b) return; var el=$(b.dataset.f); if(el){el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'}); el.classList.add('on');}});
+
+  function msg(cls,html){var d=document.createElement('div'); d.className='m '+cls; d.innerHTML=html; $('log').appendChild(d); $('log').scrollTop=$('log').scrollHeight; return d;}
+  function mark(ids){document.querySelectorAll('.frag.on').forEach(function(e){e.classList.remove('on');}); ids.forEach(function(id){var e=$(id); if(e) e.classList.add('on');});}
+
+  function ask(q, instant){
+    timers.forEach(clearTimeout); timers=[];
+    var r=KB.search(q), top=r.top, best=top[0]?top[0].score:0;
+    msg('me',esc(q));
+    ['s1','s2','s3','s4'].forEach(function(s){$(s).classList.toggle('wait',!instant);});
+    var typing=instant?null:msg('bot','<span class="dots"><i></i><i></i><i></i></span>');
+    function s1(){ $('tok').innerHTML=(r.q.length?r.q:['—']).map(function(t){return '<span>'+esc(t)+'</span>';}).join('')+r.added.map(function(t){return '<span class="syn">+ '+esc(t)+'</span>';}).join(''); $('s1').classList.remove('wait'); }
+    function s2(){ $('hits').innerHTML=top.length?top.map(function(h,i){var w=Math.max(6,Math.round(h.score/(best||1)*100)); return '<div class="hit'+(i===0?' top':'')+'"><span class="t">'+esc(h.c.title)+' · фрагмент '+h.c.n+'</span><span class="v">'+h.score.toFixed(1)+'</span><div class="bar"><i style="width:'+(instant?w:0)+'%" data-w="'+w+'"></i></div></div>';}).join(''):'<p class="note">Ничего похожего в базе нет.</p>';
+      $('s2').classList.remove('wait'); if(!instant) requestAnimationFrame(function(){ document.querySelectorAll('#hits .bar i').forEach(function(i){i.style.width=i.dataset.w+'%';}); }); }
+    var level=best>=OK?'ok':(best>=MID?'warn':'bad');
+    function s3(){ $('conf').innerHTML=level==='ok'?'<span class="pill ok">Высокая</span> Совпадение сильное — можно отвечать.':level==='warn'?'<span class="pill warn">Средняя</span> Ответ есть, но лучше уточнить вопрос.':'<span class="pill bad">Нет ответа</span> В базе этого нет — выдумывать нельзя, передаём сотруднику.'; $('s3').classList.remove('wait'); }
+    function s4(){
+      if(typing) typing.remove();
+      if(level==='bad'){ msg('bot no','В базе знаний нет ответа на этот вопрос. Передаю его сотруднику поддержки — он ответит в течение часа.'); $('s4t').textContent='Источников нет — бот не стал придумывать ответ.'; mark([]); $('s4').classList.remove('wait'); return; }
+      var parts=[top[0]]; if(top[1] && top[1].score>=best*0.6) parts.push(top[1]);
+      var text=parts.map(function(p,i){return esc(p.c.text)+' <sup>['+(i+1)+']</sup>';}).join(' ');
+      if(level==='warn') text='Похоже, речь об этом: '+text;
+      var cites=parts.map(function(p,i){return '<button type="button" class="cite" data-f="f-'+p.c.doc+'-'+p.c.n+'">['+(i+1)+'] '+esc(p.c.title)+' · фрагмент '+p.c.n+'</button>';}).join('');
+      msg('bot',text+'<div class="cites">'+cites+'</div>');
+      mark(parts.map(function(p){return 'f-'+p.c.doc+'-'+p.c.n;}));
+      $('s4t').textContent='Ответ собран из '+parts.length+' '+(parts.length===1?'фрагмента':'фрагментов')+'. Нажмите на ссылку — подсветится место в базе.';
+      $('s4').classList.remove('wait');
+    }
+    if(instant){s1();s2();s3();s4();return;}
+    later(s1,300); later(s2,900); later(s3,1500); later(s4,2100);
+  }
+
+  msg('bot','Здравствуйте! Я отвечаю по регламентам магазина: возврат, доставка, гарантия, оплата, бонусы. Спросите что-нибудь или нажмите на готовый вопрос.');
+  ask(ASK[0], true);
+})();
+</script>
+</body>
+</html>

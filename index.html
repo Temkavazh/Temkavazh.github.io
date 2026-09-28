@@ -46,6 +46,7 @@ a{color:inherit}
 .list{padding-block:56px 24px;display:flex;flex-direction:column;gap:22px}
 .list > h2{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.01em}
 .proj{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:32px;align-items:center}
+.proj.flip{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
 .proj.flip .media{order:-1}
 .proj.compact{grid-template-columns:minmax(0,1fr)}
 .tag{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 9px;border-radius:7px}
@@ -84,6 +85,25 @@ a{color:inherit}
 .chips span.hl{background:#2A3160;border-color:#3A4380;color:#C8CFFF}
 .cap{font-size:12.5px;color:var(--muted);margin:0}
 
+.gs{display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px;align-items:stretch}
+.gs .phone{padding:16px}
+.gs .phone .shot{width:180px;border-width:5px;border-radius:28px}
+.pipe{background:var(--dark);border-radius:18px;padding:16px 16px 16px 14px;color:var(--dark-ink);min-width:0}
+.pipe-h{margin:0 0 12px;font-size:13px;font-weight:600;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px}
+.pipe-h span{font:400 11px var(--f-mono);color:var(--dark-muted)}
+.pipe ol{list-style:none;margin:0;padding:0 0 0 20px;position:relative;display:flex;flex-direction:column;gap:7px}
+.pipe ol::before{content:"";position:absolute;left:5px;top:10px;bottom:10px;width:2px;background:var(--dark-line)}
+.pipe li{position:relative;background:#1F2229;border:1px solid var(--dark-line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.4;opacity:.5;transition:opacity .35s,border-color .35s}
+.pipe li::before{content:"";position:absolute;left:-19px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--dark-line);transition:background-color .35s}
+.pipe li.done{opacity:.9}.pipe li.done::before{background:#7FE0A8}
+.pipe li.on{opacity:1;border-color:#8C9BFF}.pipe li.on::before{background:#8C9BFF}
+.pipe li b{display:block;font-weight:600;font-size:13px;margin-bottom:4px}
+.pipe code{display:block;font:11.5px/1.5 var(--f-mono);color:#C4C8D2;background:#15171D;border-radius:6px;padding:6px 8px;white-space:pre-wrap}
+.kv4{display:flex;flex-wrap:wrap;gap:4px}
+.kv4 i{font:normal 11.5px var(--f-mono);background:#2A3160;color:#C8CFFF;padding:3px 6px;border-radius:5px}
+.okc{color:#7FE0A8}
+.pr strong{color:#fff;font-weight:600}
+.btnlike{display:inline-block;background:#8C9BFF;color:#0D1022;border-radius:7px;padding:4px 9px;font-weight:500}
 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .row2 .proj{grid-template-columns:minmax(0,1fr);align-items:start}
 
@@ -98,6 +118,7 @@ footer strong{color:var(--ink);font-weight:600}
   .proj,.proj.flip{grid-template-columns:minmax(0,1fr);gap:22px;padding:20px}
   .proj .media,.proj.flip .media{order:-1}
   .nums{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gs{grid-template-columns:minmax(0,1fr)}
   .row2{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:520px){.hero .wrap{padding-block:44px 40px}.pair{grid-template-columns:minmax(0,1fr)}.proj{border-radius:18px}}
@@ -112,7 +133,7 @@ footer strong{color:var(--ink);font-weight:600}
     <h1>Убираю ручную работу из&nbsp;бизнеса с&nbsp;помощью <em>ИИ</em></h1>
     <p class="lead">Нахожу, где команда теряет время на рутину, и превращаю это в систему: ИИ-модерация, боты, сайты, интеграции с CRM и отчётность, которая собирается сама.</p>
     <div class="nums">
-      <div class="num"><b>8</b><span>проектов — от сайта до ИИ-сервиса</span></div>
+      <div class="num"><b>9</b><span>проектов — от сайта до ИИ-сервиса</span></div>
       <div class="num"><b>86%</b><span>отзывов ИИ разобрал без модератора</span></div>
       <div class="num"><b>3 200</b><span>объектов капстроя в одной сводке</span></div>
       <div class="num"><b>1 час</b><span>вместо нескольких дней на отчёт</span></div>
@@ -174,6 +195,27 @@ footer strong{color:var(--ink);font-weight:600}
 
   <article class="proj">
     <div>
+      <span class="tag">RAG · живое демо</span>
+      <h3>Бот по базе знаний, который не выдумывает</h3>
+      <p class="task">Сотрудники и клиенты задают одни и те же вопросы, а ответы разбросаны по регламентам и PDF. Обычный ИИ-бот при этом легко сочиняет то, чего в документах нет.</p>
+      <ul class="did">
+        <li>Документы режутся на фрагменты, поиск находит самые похожие на вопрос.</li>
+        <li>Ответ строится только по найденному, у каждого ответа — ссылка на источник.</li>
+        <li>Если совпадение слабое, бот говорит «в базе этого нет» и передаёт вопрос сотруднику.</li>
+      </ul>
+      <div class="res">
+        <div><b>ссылка</b><span>на источник у каждого ответа</span></div>
+        <div><b>стоп</b><span>если ответа в базе нет</span></div>
+      </div>
+      <div class="go"><a class="main" href="kb/">Спросить бота</a></div>
+    </div>
+    <div class="media">
+      <button class="shot" type="button" data-full="img/kb.jpg"><img src="img/kb.jpg" width="1440" height="1000" alt="Бот по базе знаний: чат с ответом и ссылкой на источник, справа — как бот нашёл ответ и насколько уверен" loading="lazy"></button>
+    </div>
+  </article>
+
+  <article class="proj flip">
+    <div>
       <span class="tag">Сайт · автоматизация цен</span>
       <h3>G Store — магазин Apple-техники</h3>
       <p class="task">Магазину с шоурумом нужен был свой сайт с каталогом и ценами, которые меняются каждый день вслед за поставщиками.</p>
@@ -186,11 +228,25 @@ footer strong{color:var(--ink);font-weight:600}
       <div class="go"><a class="main" href="https://g-stor.ru/" target="_blank" rel="noopener">Открыть сайт</a></div>
     </div>
     <div class="media">
-      <div class="phone"><button class="shot" type="button" data-full="img/gstore-mobile.jpg"><img src="img/gstore-mobile.jpg" width="390" height="844" alt="Мобильная версия сайта G Store: главная с iPhone 17 Pro Max, адрес шоурума и категории" loading="lazy"></button></div>
+      <div class="gs">
+        <div class="phone"><button class="shot" type="button" data-full="img/gstore-mobile.jpg"><img src="img/gstore-mobile.jpg" width="390" height="844" alt="Мобильная версия сайта G Store: главная с iPhone 17 Pro Max, адрес шоурума и категории" loading="lazy"></button></div>
+        <div class="pipe" aria-label="Как цены из Telegram попадают на сайт">
+          <p class="pipe-h">Цены из Telegram — как это работает <span>пример данных</span></p>
+          <ol id="pipe">
+            <li class="done"><b>Сообщение поставщика в группе</b><code>17 Pro 256 Orange — 98 500
+17 Pro Max 256 Blue — 107 900</code></li>
+            <li class="done"><b>LLM разбирает в строгую схему</b><span class="kv4"><i>iPhone 17 Pro</i><i>256 ГБ</i><i>оранжевый</i><i>98 500</i></span></li>
+            <li class="done"><b>Сопоставление с каталогом</b><span class="okc">совпал вариант товара на сайте</span></li>
+            <li class="done"><b>Розница по формуле</b><span class="pr">закупка 98 500 → <strong>106 490 ₽</strong></span></li>
+            <li class="done"><b>Менеджер подтверждает пакет</b><span class="btnlike">Подтвердить 14 изменений</span></li>
+            <li class="done"><b>Цена на сайте обновлена</b></li>
+          </ol>
+        </div>
+      </div>
     </div>
   </article>
 
-  <article class="proj flip">
+  <article class="proj">
     <div>
       <span class="tag">Отчётность · Excel</span>
       <h3>Сводный отчёт по продажам, который собирается сам</h3>
@@ -212,7 +268,7 @@ footer strong{color:var(--ink);font-weight:600}
     </div>
   </article>
 
-  <article class="proj">
+  <article class="proj flip">
     <div>
       <span class="tag">Приложение · аналитика</span>
       <h3>Отчётность по 3&nbsp;200 объектам капитального строительства</h3>
@@ -235,7 +291,7 @@ footer strong{color:var(--ink);font-weight:600}
     </div>
   </article>
 
-  <article class="proj flip">
+  <article class="proj">
     <div>
       <span class="tag">Веб-приложение · ИИ-помощник</span>
       <h3>Выездник — приложение для отдела претензионной работы</h3>
@@ -313,6 +369,19 @@ footer strong{color:var(--ink);font-weight:600}
     lb.querySelector('button').focus();
   });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+
+  var pipe = document.getElementById('pipe');
+  if (pipe && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var steps = pipe.querySelectorAll('li'), i = -1;
+    setTimeout(function tick(){
+      i = (i + 1) % (steps.length + 2);
+      steps.forEach(function(s, k){
+        s.classList.toggle('on', k === i);
+        s.classList.toggle('done', k < i || i >= steps.length);
+      });
+      setTimeout(tick, i >= steps.length ? 1600 : 1100);
+    }, 1500);
+  }
 })();
 </script>
 </body>
