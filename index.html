@@ -45,7 +45,7 @@ a{color:inherit}
 
 .list{padding-block:56px 24px;display:flex;flex-direction:column;gap:22px}
 .list > h2{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,3vw,30px);margin:0 0 6px;letter-spacing:-.01em}
-.proj{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:32px;align-items:center}
+.proj{scroll-margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:32px;align-items:center}
 .proj.flip{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
 .proj.flip .media{order:-1}
 .proj.compact{grid-template-columns:minmax(0,1fr)}
@@ -214,7 +214,7 @@ footer strong{color:var(--ink);font-weight:600}
     </div>
   </article>
 
-  <article class="proj flip">
+  <article class="proj flip" id="bitrix24">
     <div>
       <span class="tag">Битрикс24 · демо-портал</span>
       <h3>Автоматизация обращений клиентов в Битрикс24</h3>
