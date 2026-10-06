@@ -94,9 +94,9 @@ footer a{color:var(--accent)}
 <body>
 <main class="wrap">
   <header>
-    <p class="eyebrow"><a href="../">Портфолио</a> · RAG · живое демо</p>
+    <p class="eyebrow"><a href="../">Портфолио</a> · Поиск по базе знаний · браузерное демо</p>
     <h1>Бот по базе знаний</h1>
-    <p class="sub">Спрашиваете как у коллеги — бот находит ответ в регламентах компании и показывает, откуда его взял. Если в базе ответа нет, честно говорит об этом, а не выдумывает.</p>
+    <p class="sub">Браузерное демо на учебных регламентах: поиск показывает найденные фрагменты и источники, а при слабом совпадении сообщает, что ответа нет. Правила магазина и сроки здесь вымышленные.</p>
   </header>
 
   <section class="stage" aria-label="Демонстрация">
@@ -131,7 +131,7 @@ footer a{color:var(--accent)}
       <span class="node ai">LLM отвечает только по ним</span><span class="arr">→</span>
       <span class="node">Ссылки на источник</span>
     </div>
-    <p>В демо поиск работает прямо в браузере, а ответ собирается из найденного фрагмента. В рабочей версии найденные фрагменты передаются модели, и она формулирует ответ своими словами — но только по ним. Если уверенность низкая, бот передаёт вопрос сотруднику.</p>
+    <p>В демо поиск работает прямо в браузере, а ответ собирается из найденного фрагмента. Это демонстрация этапа поиска: лексическое ранжирование фрагментов, ссылки на источник и отказ при слабом совпадении. Внешняя модель не вызывается, обращения сотрудникам не отправляются. В рабочей RAG-интеграции найденные фрагменты можно передать LLM, а спорные вопросы — человеку; такие ответы всё равно требуют проверки качества.</p>
   </section>
 
   <footer>
@@ -269,10 +269,10 @@ footer a{color:var(--accent)}
     function s2(){ $('hits').innerHTML=top.length?top.map(function(h,i){var w=Math.max(6,Math.round(h.score/(best||1)*100)); return '<div class="hit'+(i===0?' top':'')+'"><span class="t">'+esc(h.c.title)+' · фрагмент '+h.c.n+'</span><span class="v">'+h.score.toFixed(1)+'</span><div class="bar"><i style="width:'+(instant?w:0)+'%" data-w="'+w+'"></i></div></div>';}).join(''):'<p class="note">Ничего похожего в базе нет.</p>';
       $('s2').classList.remove('wait'); if(!instant) requestAnimationFrame(function(){ document.querySelectorAll('#hits .bar i').forEach(function(i){i.style.width=i.dataset.w+'%';}); }); }
     var level=best>=OK?'ok':(best>=MID?'warn':'bad');
-    function s3(){ $('conf').innerHTML=level==='ok'?'<span class="pill ok">Высокая</span> Совпадение сильное — можно отвечать.':level==='warn'?'<span class="pill warn">Средняя</span> Ответ есть, но лучше уточнить вопрос.':'<span class="pill bad">Нет ответа</span> В базе этого нет — выдумывать нельзя, передаём сотруднику.'; $('s3').classList.remove('wait'); }
+    function s3(){ $('conf').innerHTML=level==='ok'?'<span class="pill ok">Высокая</span> Сильное совпадение с текстом источника.':level==='warn'?'<span class="pill warn">Средняя</span> Найден фрагмент, но лучше уточнить вопрос.':'<span class="pill bad">Нет ответа</span> В базе этого нет. В рабочей системе здесь нужна проверка сотрудника.'; $('s3').classList.remove('wait'); }
     function s4(){
       if(typing) typing.remove();
-      if(level==='bad'){ msg('bot no','В базе знаний нет ответа на этот вопрос. Передаю его сотруднику поддержки — он ответит в течение часа.'); $('s4t').textContent='Источников нет — бот не стал придумывать ответ.'; mark([]); $('s4').classList.remove('wait'); return; }
+      if(level==='bad'){ msg('bot no','В базе знаний нет ответа на этот вопрос. В рабочей системе этот случай нужно передать сотруднику; в демо сообщение никуда не отправляется.'); $('s4t').textContent='Источников нет — ответ не сформирован.'; mark([]); $('s4').classList.remove('wait'); return; }
       var parts=[top[0]]; if(top[1] && top[1].score>=best*0.6) parts.push(top[1]);
       var text=parts.map(function(p,i){return esc(p.c.text)+' <sup>['+(i+1)+']</sup>';}).join(' ');
       if(level==='warn') text='Похоже, речь об этом: '+text;
